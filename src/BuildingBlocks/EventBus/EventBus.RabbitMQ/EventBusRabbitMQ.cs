@@ -61,8 +61,8 @@ namespace EventBus.RabbitMQ
             var body = Encoding.UTF8.GetBytes(message);
             var properties = new BasicProperties { DeliveryMode = DeliveryModes.Persistent };
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            policy.Execute(async () =>
+
+            policy.Execute( () =>
             {
           
                 // Ensure if queue exists while publishing
@@ -78,14 +78,14 @@ namespace EventBus.RabbitMQ
                 //        exchange: EventBusConfig.DefaultTopicName,
                 //        routingKey: eventName);
 
-                await consumerChannel.BasicPublishAsync(
+                 consumerChannel.BasicPublishAsync(
                         exchange: EventBusConfig.DefaultTopicName,
                         routingKey: eventName,
                         mandatory: true,
                         basicProperties: properties,
-                        body: body);
+                        body: body).GetAwaiter().GetResult();
             });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+
         }
 
         public override async void SubscribeAsync<T, TH>()

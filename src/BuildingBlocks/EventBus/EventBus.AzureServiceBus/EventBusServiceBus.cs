@@ -8,7 +8,7 @@ using System.Text;
 
 namespace EventBus.AzureServiceBus
 {
-    class EventBusServiceBus : BaseEventBus
+    public class EventBusServiceBus : BaseEventBus
     {
         private ITopicClient topicClient;
         private ManagementClient managementClient;
