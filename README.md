@@ -14,9 +14,7 @@
 </div>
 
 <!-- ABOUT THE PROJECT -->
-## About Project Arhitecture
-
-![SellingBuddy System Architecture]
+## About Project Architecture
 
 <a href="https://ibb.co/nsZx23jG"><img src="https://i.ibb.co/WWqm9Dfh/Screenshot-2025-02-03-191607.png" alt="Screenshot-2025-02-03-191607" border="0"></a>
 
