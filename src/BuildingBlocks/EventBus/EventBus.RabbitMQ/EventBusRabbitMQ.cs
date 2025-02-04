@@ -1,6 +1,7 @@
 ﻿using EventBus.Base;
 using EventBus.Base.Events;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
@@ -14,25 +15,38 @@ namespace EventBus.RabbitMQ
     {
         RabbitMQPersistentConnection persistentConnection;
         private readonly IConnectionFactory connectionFactory;
-        private  IChannel consumerChannel;
+        private IChannel consumerChannel;
 
         public EventBusRabbitMQ(IServiceProvider serviceProvider, EventBusConfig eventBusConfig) : base(serviceProvider, eventBusConfig)
         {
+
+            var settings = new JsonSerializerSettings
+            {
+                ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
+                MissingMemberHandling = MissingMemberHandling.Ignore,
+                ContractResolver = new DefaultContractResolver
+                {
+                    IgnoreSerializableInterface = true,
+                    IgnoreSerializableAttribute = true
+                },
+                Error = (sender, args) =>
+                {
+                    args.ErrorContext.Handled = true; // Prevent exceptions from stopping deserialization
+                }
+            };
+
+
             if (eventBusConfig.Connection != null)
             {
-                var connectionJson = JsonConvert.SerializeObject(EventBusConfig.Connection, new JsonSerializerSettings()
-                {
-                    // Self referencing loop detected for property
-                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
-                });
+                var connectionJson = JsonConvert.SerializeObject(EventBusConfig.Connection, settings);
 
-                connectionFactory = JsonConvert.DeserializeObject<ConnectionFactory>(connectionJson);
+                connectionFactory = JsonConvert.DeserializeObject<ConnectionFactory>(connectionJson, settings);
             }
             else connectionFactory = new ConnectionFactory();
 
             persistentConnection = new RabbitMQPersistentConnection(connectionFactory, EventBusConfig.ConnectionRetryCount);
-            
-            consumerChannel = CreateConsumerChannel().GetAwaiter().GetResult();
+
+            CreateConsumerChannel();
 
             SubscriptionManager.OnEventRemoved += SubscriptionManager_OnEventRemoved;
         }
@@ -62,28 +76,27 @@ namespace EventBus.RabbitMQ
             var properties = new BasicProperties { DeliveryMode = DeliveryModes.Persistent };
 
 
-            policy.Execute( () =>
+            policy.Execute(() =>
             {
-          
-                // Ensure if queue exists while publishing
-                //consumerChannel.QueueDeclare(
-                //        queue: GetSubName(eventName),
-                //        durable: true,
-                //        exclusive: false,
-                //        autoDelete: false,
-                //        arguments: null);
+                //Ensure if queue exists while publishing
+                consumerChannel.QueueDeclareAsync(
+                       queue: GetSubName(eventName),
+                       durable: true,
+                       exclusive: false,
+                       autoDelete: false,
+                       arguments: null).GetAwaiter().GetResult();
 
-                //consumerChannel.QueueBind(
-                //        queue: GetSubName(eventName),
-                //        exchange: EventBusConfig.DefaultTopicName,
-                //        routingKey: eventName);
+                consumerChannel.QueueBindAsync(
+                       queue: GetSubName(eventName),
+                       exchange: EventBusConfig.DefaultTopicName,
+                       routingKey: eventName).GetAwaiter().GetResult();
 
-                 consumerChannel.BasicPublishAsync(
-                        exchange: EventBusConfig.DefaultTopicName,
-                        routingKey: eventName,
-                        mandatory: true,
-                        basicProperties: properties,
-                        body: body).GetAwaiter().GetResult();
+                consumerChannel.BasicPublishAsync(
+                      exchange: EventBusConfig.DefaultTopicName,
+                      routingKey: eventName,
+                      mandatory: true,
+                      basicProperties: properties,
+                      body: body).GetAwaiter().GetResult();
             });
 
         }
@@ -143,7 +156,7 @@ namespace EventBus.RabbitMQ
             }
         }
 
-        private async Task<IChannel?> CreateConsumerChannel()
+        private async void CreateConsumerChannel()
         {
             if (!persistentConnection.IsConnected)
             {
@@ -152,10 +165,10 @@ namespace EventBus.RabbitMQ
 
             var channel = await persistentConnection.CreateModel();
 
-             await channel.ExchangeDeclareAsync(exchange: EventBusConfig.DefaultTopicName,
-                                    type: "direct");
+            await channel.ExchangeDeclareAsync(exchange: EventBusConfig.DefaultTopicName,
+                                   type: "direct");
 
-            return channel;
+            consumerChannel = channel;
         }
 
         private async void StartBasicConsume(string eventName)
@@ -166,11 +179,11 @@ namespace EventBus.RabbitMQ
 
                 consumer.ReceivedAsync += Consumer_Received;
 
-               await consumerChannel.BasicConsumeAsync(
-                        queue: GetSubName(eventName),
-                        autoAck: false,
-                        consumer: consumer
-                    );
+                await consumerChannel.BasicConsumeAsync(
+                         queue: GetSubName(eventName),
+                         autoAck: false,
+                         consumer: consumer
+                     );
             }
         }
 

@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using Polly;
+﻿using Polly;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using RabbitMQ.Client.Exceptions;
@@ -23,7 +22,10 @@ public class RabbitMQPersistentConnection : IDisposable
 
     public bool IsConnected => rabbitMQConnection != null && rabbitMQConnection.IsOpen;
 
-    public async Task<IChannel> CreateModel() => await rabbitMQConnection.CreateChannelAsync();
+    public async Task<IChannel> CreateModel()
+   => await rabbitMQConnection.CreateChannelAsync();
+    
+
     public void Dispose()
     {
         isDisposed = true;
@@ -42,9 +44,9 @@ public class RabbitMQPersistentConnection : IDisposable
 
                 });
 
-            policy.Execute(async () =>
+            policy.Execute(() =>
             {
-                rabbitMQConnection = await _connectionFactory.CreateConnectionAsync();
+                _connectionFactory.CreateConnectionAsync().GetAwaiter().GetResult();
             });
 
             if (IsConnected)
