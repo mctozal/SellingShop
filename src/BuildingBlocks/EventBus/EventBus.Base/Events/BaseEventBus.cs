@@ -72,13 +72,15 @@ public abstract class BaseEventBus : IEventBus
         return processed;
     }
 
-    public abstract void Publish(IntegrationEvent @event);
+    public abstract void PublishAsync(IntegrationEvent @event);
 
-    public abstract void Subscribe<T, TH>()
+
+    public abstract void SubscribeAsync<T, TH>()
         where T : IntegrationEvent
         where TH : IIntegrationEventHandler<T>;
 
     public abstract void UnSubscribe<T, TH>()
         where T : IntegrationEvent
         where TH : IIntegrationEventHandler<T>;
+
 }

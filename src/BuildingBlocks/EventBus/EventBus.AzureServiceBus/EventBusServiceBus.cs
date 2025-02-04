@@ -37,7 +37,7 @@ namespace EventBus.AzureServiceBus
             return topicClient;
         }
 
-        public override void Publish(IntegrationEvent @event)
+        public override void PublishAsync(IntegrationEvent @event)
         {
             // Ex: OrderCreatedIntegratedEvent
             var eventName = @event.GetType().Name;
@@ -58,7 +58,7 @@ namespace EventBus.AzureServiceBus
             topicClient.SendAsync(message).GetAwaiter().GetResult();
         }
 
-        public override void Subscribe<T, TH>()
+        public override void SubscribeAsync<T, TH>()
         {
             var eventName = typeof(T).Name;
             eventName = ProcessEventName(eventName);
