@@ -5,7 +5,6 @@ using RabbitMQ.Client.Exceptions;
 using System.Net.Sockets;
 
 namespace EventBus.RabbitMQ;
-
 public class RabbitMQPersistentConnection : IDisposable
 {
     private readonly IConnectionFactory _connectionFactory;
@@ -22,10 +21,10 @@ public class RabbitMQPersistentConnection : IDisposable
 
     public bool IsConnected => rabbitMQConnection != null && rabbitMQConnection.IsOpen;
 
-    public async Task<IChannel> CreateModel()
-   => await rabbitMQConnection.CreateChannelAsync();
-    
-
+    public IModel CreateModel()
+    {
+        return rabbitMQConnection.CreateModel();
+    }
     public void Dispose()
     {
         isDisposed = true;
@@ -46,14 +45,14 @@ public class RabbitMQPersistentConnection : IDisposable
 
             policy.Execute(() =>
             {
-                _connectionFactory.CreateConnectionAsync().GetAwaiter().GetResult();
+                rabbitMQConnection = _connectionFactory.CreateConnection();
             });
 
             if (IsConnected)
             {
-                rabbitMQConnection.ConnectionShutdownAsync += RabbitMQConnection_ConnectionShutdown;
-                rabbitMQConnection.CallbackExceptionAsync += RabbitMQConnection_CallbackException;
-                rabbitMQConnection.ConnectionBlockedAsync += RabbitMQConnection_ConnectionBlocked;
+                rabbitMQConnection.ConnectionShutdown += RabbitMQConnection_ConnectionShutdown;
+                rabbitMQConnection.CallbackException += RabbitMQConnection_CallbackException;
+                rabbitMQConnection.ConnectionBlocked += RabbitMQConnection_ConnectionBlocked;
 
                 // ToDo: log
 
@@ -64,30 +63,24 @@ public class RabbitMQPersistentConnection : IDisposable
         }
     }
 
-    private Task RabbitMQConnection_ConnectionBlocked(object? sender, ConnectionBlockedEventArgs e)
+    private void RabbitMQConnection_ConnectionBlocked(object? sender, ConnectionBlockedEventArgs e)
     {
         // ToDo: log
 
         if (!isDisposed) TryConnect();
-
-        return Task.CompletedTask;
     }
 
-    private Task RabbitMQConnection_CallbackException(object? sender, CallbackExceptionEventArgs e)
+    private void RabbitMQConnection_CallbackException(object? sender, CallbackExceptionEventArgs e)
     {
         // ToDo: log
 
         if (!isDisposed) TryConnect();
-
-        return Task.CompletedTask;
     }
 
-    private Task RabbitMQConnection_ConnectionShutdown(object? sender, ShutdownEventArgs e)
+    private void RabbitMQConnection_ConnectionShutdown(object? sender, ShutdownEventArgs e)
     {
         // ToDo: log
 
         if (!isDisposed) TryConnect();
-
-        return Task.CompletedTask;
     }
 }

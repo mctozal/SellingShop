@@ -29,15 +29,16 @@ namespace EventBus.AzureServiceBus
             }
 
             // Ensure that topic already exists or not
-            if (!managementClient.TopicExistsAsync(EventBusConfig.DefaultTopicName).GetAwaiter().GetResult())
+            if (!managementClient.TopicExistsAsync(EventBusConfig.DefaultTopicName).Result)
             {
-                managementClient.CreateTopicAsync(EventBusConfig.DefaultTopicName).GetAwaiter().GetResult();
+                //handle
+                managementClient.CreateTopicAsync(EventBusConfig.DefaultTopicName);
             }
 
             return topicClient;
         }
 
-        public override void PublishAsync(IntegrationEvent @event)
+        public override void Publish(IntegrationEvent @event)
         {
             // Ex: OrderCreatedIntegratedEvent
             var eventName = @event.GetType().Name;
@@ -55,10 +56,10 @@ namespace EventBus.AzureServiceBus
                 Label = eventName
             };
 
-            topicClient.SendAsync(message).GetAwaiter().GetResult();
+            topicClient.SendAsync(message);
         }
 
-        public override void SubscribeAsync<T, TH>()
+        public override void Subscribe<T, TH>()
         {
             var eventName = typeof(T).Name;
             eventName = ProcessEventName(eventName);
@@ -84,7 +85,7 @@ namespace EventBus.AzureServiceBus
                 // Subscription will be there but we do not subscribe
                 var subscriptionClient = CreateSubscriptionClient(eventName);
 
-                subscriptionClient.RemoveRuleAsync(eventName).GetAwaiter().GetResult();
+                subscriptionClient.RemoveRuleAsync(eventName);
             }
             catch (MessagingEntityNotFoundException)
             {
@@ -129,11 +130,11 @@ namespace EventBus.AzureServiceBus
         {
             var subClient = CreateSubscriptionClient(eventName);
 
-            var exists = managementClient.SubscriptionExistsAsync(EventBusConfig.DefaultTopicName, GetSubName(eventName)).GetAwaiter().GetResult();
+            bool exists = managementClient.SubscriptionExistsAsync(EventBusConfig.DefaultTopicName, GetSubName(eventName)).Result;
 
             if (!exists)
             {
-                managementClient.CreateSubscriptionAsync(EventBusConfig.DefaultTopicName, GetSubName(eventName)).GetAwaiter().GetResult();
+                managementClient.CreateSubscriptionAsync(EventBusConfig.DefaultTopicName, GetSubName(eventName));
                 RemoveDefaultRule(subClient);
             }
 
@@ -148,7 +149,7 @@ namespace EventBus.AzureServiceBus
 
             try
             {
-                var rule = managementClient.GetRuleAsync(EventBusConfig.DefaultTopicName, GetSubName(eventName), eventName).GetAwaiter().GetResult();
+                var rule = managementClient.GetRuleAsync(EventBusConfig.DefaultTopicName, GetSubName(eventName), eventName);
                 ruleExists = rule != null;
             }
             catch (MessagingEntityNotFoundException)
@@ -163,7 +164,7 @@ namespace EventBus.AzureServiceBus
                 {
                     Filter = new CorrelationFilter { Label = eventName },
                     Name = eventName
-                }).GetAwaiter().GetResult();
+                });
             }
         }
 
@@ -171,7 +172,7 @@ namespace EventBus.AzureServiceBus
         {
             try
             {
-                subscriptionClient.RemoveRuleAsync(RuleDescription.DefaultRuleName).GetAwaiter().GetResult();
+                subscriptionClient.RemoveRuleAsync(RuleDescription.DefaultRuleName);
             }
             catch (MessagingEntityNotFoundException)
             {
@@ -188,8 +189,8 @@ namespace EventBus.AzureServiceBus
         {
             base.Dispose();
 
-            topicClient.CloseAsync().GetAwaiter().GetResult();
-            managementClient.CloseAsync().GetAwaiter().GetResult();
+            topicClient.CloseAsync();
+            managementClient.CloseAsync();
             topicClient = null;
             managementClient = null;
         }

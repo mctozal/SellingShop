@@ -33,13 +33,13 @@ namespace EventBus.UnitTest
                     DefaultTopicName = "UnitTestTopicName",
                     EventBusType = EventBusType.RabbitMQ,
                     EventNamePrefix = "IntegrationEvent",
-                    Connection = new ConnectionFactory()
-                    {
-                        HostName = "localhost",
-                        Port = 15672,
-                        UserName = "guest",
-                        Password = "guest"
-                    }
+                    //Connection = new ConnectionFactory()
+                    //{
+                    //    HostName = "localhost",
+                    //    Port = 15672,
+                    //    UserName = "guest",
+                    //    Password = "guest"
+                    //}
                 };
                 
                 return EventBusFactory.Create(config, sp);
@@ -48,7 +48,7 @@ namespace EventBus.UnitTest
             var serviceProvider = services.BuildServiceProvider();
             var eventBus = serviceProvider.GetRequiredService<IEventBus>();
 
-            eventBus.SubscribeAsync<OrderCreatedIntegrationEvent, OrderCreatedIntegrationEventHandler>();
+            eventBus.Subscribe<OrderCreatedIntegrationEvent, OrderCreatedIntegrationEventHandler>();
 
             eventBus.UnSubscribe<OrderCreatedIntegrationEvent, OrderCreatedIntegrationEventHandler>();
 
