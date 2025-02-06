@@ -1,8 +1,10 @@
 using CatalogService.Api.Infrastructure.Context;
 using CatalogService.Extensions;
+using CatalogService.Infrastructure;
 using CatalogService.Infrastructure.Context;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using Scalar.AspNetCore;
 using System;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddEntityFrameworkSqlServer();
 
+builder.Services.Configure<CatalogSettings>(builder.Configuration.GetSection("CatalogSettings"));
 builder.Services.ConfigureDbContext(builder.Configuration);
 
 
@@ -36,6 +39,7 @@ app.MigrateDbContext<CatalogContext>((context, services) =>
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
+    app.MapScalarApiReference();
 }
 
 app.UseHttpsRedirection();

@@ -72,6 +72,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EventBus.UnitTest", "tests\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogService", "src\Services\CatalogService\CatalogService\CatalogService.csproj", "{0BF267C3-6211-4DD3-B013-CC1283CA72A8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogService.Infrastructure", "src\Services\CatalogService\CatalogService.Infrastructure\CatalogService.Infrastructure.csproj", "{2DAB4CDF-F838-4D1D-A1B2-E9517083DD26}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -142,6 +144,10 @@ Global
 		{0BF267C3-6211-4DD3-B013-CC1283CA72A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0BF267C3-6211-4DD3-B013-CC1283CA72A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0BF267C3-6211-4DD3-B013-CC1283CA72A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DAB4CDF-F838-4D1D-A1B2-E9517083DD26}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DAB4CDF-F838-4D1D-A1B2-E9517083DD26}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DAB4CDF-F838-4D1D-A1B2-E9517083DD26}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DAB4CDF-F838-4D1D-A1B2-E9517083DD26}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +183,7 @@ Global
 		{85D1E483-45D3-46CA-A550-EF71336B3B9B} = {61EC8DE4-EB75-4B2D-BA24-FB522F13124A}
 		{FA6C905E-1917-4F93-9C02-7E148945A5A6} = {85D1E483-45D3-46CA-A550-EF71336B3B9B}
 		{0BF267C3-6211-4DD3-B013-CC1283CA72A8} = {C34BAC25-4B4F-4617-8D5E-E2A0EB6CAC7D}
+		{2DAB4CDF-F838-4D1D-A1B2-E9517083DD26} = {C34BAC25-4B4F-4617-8D5E-E2A0EB6CAC7D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE929A3A-D81C-4E6B-B3E4-DE872916A9FF}
