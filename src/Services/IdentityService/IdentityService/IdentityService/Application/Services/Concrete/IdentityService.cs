@@ -9,6 +9,7 @@ namespace IdentityService.Application.Services.Concrete
 {
     public class IdentityService : IIdentityService
     {
+        // test key, take it from azure key vault secret manager to use
         private static string secretKey = "SellingShopMockSecretKeyShouldBeLong";
         public Task<LoginResponseModel> Login(LoginRequestModel requestModel)
         {
