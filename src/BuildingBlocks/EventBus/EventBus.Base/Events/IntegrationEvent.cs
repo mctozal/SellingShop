@@ -6,6 +6,7 @@ namespace EventBus.Base.Events
     {
         public Guid Id { get; set; }
         public DateTime CreatedDate { get; set; }
+        public string CorrelationId { get; set; }
 
         public IntegrationEvent()
         {
@@ -14,10 +15,11 @@ namespace EventBus.Base.Events
         }
 
         [JsonConstructor]
-        public IntegrationEvent(Guid id, DateTime createdDate)
+        public IntegrationEvent(Guid id, DateTime createdDate, string correlationId)
         {
             Id=id;
             CreatedDate = createdDate;
+            CorrelationId=correlationId;
         }
     }
 }
