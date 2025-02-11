@@ -16,6 +16,7 @@ builder.Services.AddEntityFrameworkSqlServer();
 builder.Services.Configure<CatalogSettings>(builder.Configuration.GetSection("CatalogSettings"));
 builder.Services.ConfigureDbContext(builder.Configuration);
 
+builder.Services.ConfigureConsul(builder.Configuration);
 
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -48,4 +49,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.RegisterConsul(app.Services.GetRequiredService<IHostApplicationLifetime>());
+
 app.Run();
+
+
+

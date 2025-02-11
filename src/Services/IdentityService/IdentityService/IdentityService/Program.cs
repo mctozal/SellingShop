@@ -3,6 +3,7 @@ using Scalar.AspNetCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using IdentityService.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddControllers();
 builder.Services.AddOpenApi();
 
 builder.Services.AddScoped<IIdentityService, IdentityService.Application.Services.Concrete.IdentityService>();
+
+builder.Services.ConfigureConsul(builder.Configuration);
 
 var app = builder.Build();
 
@@ -28,5 +31,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.RegisterConsul(app.Services.GetRequiredService<IHostApplicationLifetime>());
 
 app.Run();

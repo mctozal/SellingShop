@@ -1,4 +1,4 @@
-namespace BasketService.Api
+namespace Web.ApiGateway
 {
     public class WeatherForecast
     {
