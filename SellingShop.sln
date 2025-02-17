@@ -70,6 +70,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BasketService.Api", "src\Se
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderService.Api", "src\Services\OrderService\OrderService\OrderService.Api\OrderService.Api.csproj", "{C41B5AC2-5F50-4716-81D8-488851CD2427}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "redis", "redis", "{65D576F9-CADF-460F-B95A-1840C09D5987}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -161,6 +166,7 @@ Global
 		{E3B02F9F-E755-4C4E-9B59-AB0FF952D06D} = {97E87910-38FF-4207-858C-0981E7F75ECD}
 		{08F15874-BCCA-46BA-AAE3-B2501943C0A7} = {BCF9B239-8E11-443D-8BCB-0F246E19DC28}
 		{C41B5AC2-5F50-4716-81D8-488851CD2427} = {932846F6-F093-4EF0-8E68-98AEE7E61DB7}
+		{65D576F9-CADF-460F-B95A-1840C09D5987} = {97E87910-38FF-4207-858C-0981E7F75ECD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EE929A3A-D81C-4E6B-B3E4-DE872916A9FF}
