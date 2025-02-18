@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <Folder Include="Infrastructure\Services\" />
-    <Folder Include="IntegrationEvents\EventHandlers\" />
   </ItemGroup>
 
   <ItemGroup>

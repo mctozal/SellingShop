@@ -17,16 +17,14 @@ namespace CatalogService.Extensions
             return services;
         }
 
-        public static IApplicationBuilder RegisterConsul(this IApplicationBuilder app, IHostApplicationLifetime lifetime)
+        public static IApplicationBuilder RegisterConsul(this IApplicationBuilder app, IHostApplicationLifetime lifetime,IConfiguration configuration)
         {
             var consulClient = app.ApplicationServices.GetRequiredService<IConsulClient>();
             var loggingFactory = app.ApplicationServices.GetRequiredService<ILoggerFactory>();
             var logger = loggingFactory.CreateLogger<IApplicationBuilder>();
 
-          
-            var features = app.Properties["server.Features"] as FeatureCollection;
-            var addresses = features.Get<IServerAddressesFeature>();
-            var address = addresses.Addresses.First();
+
+            var address = configuration["ConsulConfig:Address"];
             var uri = new Uri(address);
 
             var registration = new AgentServiceRegistration()

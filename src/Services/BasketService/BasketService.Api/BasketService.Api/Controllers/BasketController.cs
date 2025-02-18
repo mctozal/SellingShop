@@ -12,6 +12,7 @@ namespace BasketService.Api.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
+    [ProducesResponseType((int)HttpStatusCode.Forbidden)]
     public class BasketController : ControllerBase
     {
         private readonly IBasketRepository _basketRepository;

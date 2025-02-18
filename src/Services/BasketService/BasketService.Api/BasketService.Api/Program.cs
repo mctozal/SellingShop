@@ -1,4 +1,5 @@
 using BasketService.Api.Core.Application.Repository;
+using BasketService.Api.Extensions;
 using BasketService.Api.Infrastructure.Repository;
 using BasketService.Application.Services.Abstract;
 using BasketService.Application.Services.Concrete;
@@ -18,11 +19,15 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddJwtAuthentication(builder.Configuration);
+
 builder.Services.ConfigureConsul(builder.Configuration);
 
 builder.Services.ConfigureRedis(builder.Configuration);
 
 builder.Services.AddRedis(builder.Configuration);
+
+builder.Services.ConfigureSubscription();
 
 builder.Services.AddScoped<IBasketRepository, RedisBasketRepository>();
 
@@ -34,7 +39,7 @@ builder.Services.AddSingleton<IEventBus>(serviceProvider =>
     {
         ConnectionRetryCount = 5,
         EventNameSuffix = "IntegrationEvent",
-        SubscriberClientAppName = "PaymentService",
+        SubscriberClientAppName = "BasketService",
         EventBusType = EventBusType.RabbitMQ
     };
     return EventBusFactory.Create(config, serviceProvider);
@@ -60,7 +65,8 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
-app.RegisterConsul(app.Services.GetRequiredService<IHostApplicationLifetime>());
+app.RegisterConsul(app.Services.GetRequiredService<IHostApplicationLifetime>(), builder.Configuration);
 
+app.RegisterSubscription();
 
 app.Run();

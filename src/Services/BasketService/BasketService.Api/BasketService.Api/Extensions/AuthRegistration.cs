@@ -13,7 +13,7 @@ namespace BasketService.Api.Extensions
         {
 
             var secret = configuration["AuthConfig:Secret"];
-            var signingKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(secret));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>

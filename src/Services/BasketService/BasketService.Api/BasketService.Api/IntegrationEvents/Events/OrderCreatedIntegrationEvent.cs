@@ -5,8 +5,6 @@ namespace BasketService.Api.IntegrationEvents.Events
 {
     public class OrderCreatedIntegrationEvent : IntegrationEvent
     {
-        private object userName;
-
         public string UserId { get; set; }
         public string UserName { get; set; }
         public int OrderNumber { get; set; }

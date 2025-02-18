@@ -32,6 +32,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.RegisterConsul(app.Services.GetRequiredService<IHostApplicationLifetime>());
+app.RegisterConsul(app.Services.GetRequiredService<IHostApplicationLifetime>(),builder.Configuration);
 
 app.Run();
