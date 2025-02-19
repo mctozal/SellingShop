@@ -15,8 +15,15 @@ namespace BasketService.Api.Extensions
             var secret = configuration["AuthConfig:Secret"];
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret));
 
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+
+            var creds = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
+
+            services.AddAuthentication(opt =>
+           {
+               opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+               opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+           })
+             .AddJwtBearer(options =>
                 {
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -24,7 +31,8 @@ namespace BasketService.Api.Extensions
                         ValidateAudience = false,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        IssuerSigningKey = signingKey
+                        IssuerSigningKey = signingKey,
+
                     };
                 });
 

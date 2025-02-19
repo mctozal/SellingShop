@@ -19,9 +19,9 @@ builder.Services.AddOpenApi();
 
 builder.Services.AddHttpContextAccessor();
 
-builder.Services.AddJwtAuthentication(builder.Configuration);
-
 builder.Services.ConfigureConsul(builder.Configuration);
+
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 builder.Services.ConfigureRedis(builder.Configuration);
 
@@ -57,13 +57,11 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
-
-app.MapControllers();
-
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.MapControllers();
 
 app.RegisterConsul(app.Services.GetRequiredService<IHostApplicationLifetime>(), builder.Configuration);
 
